@@ -1,0 +1,76 @@
+{% extends 'admin/layout.html'%}{%block title %} About {% endblock %}{%block content%}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Dashboard</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Daftar Video</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+           <table class="table table-bordered table-hover">
+               <thead>
+               <tr>
+                   <!--<th>No</th>-->
+                   <th>Nama</th>
+                   <th>Deskripsi</th>
+                   <th>Path</th>
+                   <th>Aksi</th>
+               </tr>
+               </thead>
+               <tbody>
+               {% for item in results %}
+                   <tr>
+                       <!--<td>{{ item[0] }}</td>-->
+                       <td>{{ item[1] }}</td>
+                       <td>{{ item[2] }}</td>
+                       <td>{{ item[3] }}</td>
+                       <td>
+                           <a href="/edit/{{item[0]}}" class="btn btn-sm btn-warning">Edit</a>
+                           <a href="/delete/{{item[0]}}" class="btn btn-sm btn-danger" onclick="return confirmDelete()">Delete</a>
+                       </td>
+                   </tr>
+               {% endfor %}
+               </tbody>
+           </table>
+        </div>
+    </div>
+    <script>
+        function confirmDelete() {
+            var isConfirmed = window.confirm('Anda yakin ingin menghapus video?');
+            return isConfirmed;
+        }
+        </script>
+    <!-- /.card -->
+</section>
+
+{%endblock %}

@@ -1,0 +1,115 @@
+{% extends 'layout.html'%}{%block title %} Klasifikasi {% endblock %}{%block content%}
+<style>
+    input[type=button], input[type=submit], input[type=reset] {
+        background-color: #04AA6D;
+        border: none;
+        color: white;
+        padding: 5px 32px;
+        text-decoration: none;
+        margin: 16px 1px;
+        cursor: pointer;
+    }
+</style>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div id="contact" class="contact-us section" data-wow-duration="1s" data-wow-delay="0.5s">
+    <div class="container">
+        <div class="col-lg-12 wow fadeInUp" data-wow-duration="0.5s" data-wow-delay="0.25s">
+        <div id="contact" class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mt-4">
+                            <label for="videoSelect">Pilih Video:</label>
+                            <select id="videoSelect" class="form-control">
+                                <option value="" selected disabled>Pilih Video</option>
+                            </select>
+                        </div>
+                        <button onclick="startClassification()" class="btn btn-primary" style="width: 23%;">Mulai</button>{% if session['name']%}<button onclick="deleteVideo()" class="btn btn-danger" style="padding: 5px 32px; margin: 16px 1px; width: 23%;">Hapus</button>{%else %}{%endif%}<br><br>
+
+                        <label for="videoSelect">Unggah Video:</label>
+                        <form for="formFile" class="form-label" action="/upload" method="post" enctype="multipart/form-data">
+                            <input class="form-control" type="file" id="formFile" type="file" name="video_file" accept=".mp4">
+                            <input type="submit" value="Upload">
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="video-container">
+                            <img id="videoStream">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+      
+    <script>
+        function populateVideoOptions() {
+            var videoSelect = document.getElementById("videoSelect");
+
+            // Menggunakan fetch untuk memuat daftar video dari server-side (Flask)
+            fetch('/get_videos')
+                .then(response => response.json())
+                .then(data => {
+                    data.videos.forEach(video => {
+                        var option = document.createElement("option");
+                        option.value = video;
+                        option.text = video;
+                        videoSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function startClassification() {
+            var videoSelect = document.getElementById("videoSelect");
+            var videoName = videoSelect.value;
+            var videoStream = document.getElementById("videoStream");
+            // Asumsikan Anda memiliki titik akhir di sisi server "/video_feed" yang mengembalikan aliran video untuk video dengan nama yang diberikan
+            videoStream.src = "/video_feed?video=" + videoName;
+        }
+
+        // Panggil fungsi untuk memuat daftar video saat halaman dimuat
+        window.onload = populateVideoOptions;
+
+
+
+        function deleteVideo() {
+            var videoSelect = document.getElementById("videoSelect");
+            var videoName = videoSelect.value;
+            if (!videoName) {
+                alert('Pilih video yang ingin dihapus.');
+                return;
+            }
+    
+            // Tampilkan konfirmasi sebelum menghapus video
+            var confirmed = confirm('Apakah Anda yakin ingin menghapus video ini?');
+            if (!confirmed) {
+                return;
+            }
+    
+            // Menggunakan fetch untuk mengirim permintaan penghapusan video ke server-side (Flask)
+            fetch('/delete_video', {
+                method: 'POST',
+                body: new URLSearchParams({ 'video_name': videoName }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Hapus opsi video dari select
+                    var optionToRemove = videoSelect.querySelector(`option[value="${videoName}"]`);
+                    if (optionToRemove) {
+                        videoSelect.removeChild(optionToRemove);
+                    }
+                    alert(data.message);
+                } else {
+                    alert('Gagal menghapus video: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</div>
+{%endblock %}

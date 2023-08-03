@@ -1,0 +1,56 @@
+{% extends 'admin/layout.html'%}{%block title %} About {% endblock %}{%block content%}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Edit Video</h1>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Edit Video</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <form  class="form-label" action="/update" method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="nama">Nama</label>
+                        <input type="text" class="form-control" id="nama" name="nama" value="{{row[1]}}" placeholder="Nama">
+                        <input type="hidden" class="form-control" id="id" name="id" value="{{row[0]}}">
+                    </div>
+                    <div class="form-group">
+                        <label for="deskripsi">Deskripsi</label>
+                        <input type="text" value="{{row[2]}}" class="form-control" id="deskripsi" name="deskripsi" placeholder="Deskripsi">
+                    </div>
+                    <div class="form-group">
+                        <label for="formFile">Pilih Video</label>
+                        <input class="form-control" type="file" id="formFile" type="file" name="video_file" accept=".mp4">
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /.card -->
+</section>
+
+{%endblock %}
